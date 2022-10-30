@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chenbaiyu.dao.system.DeptDao">
+    <resultMap id="BaseResultMap" type="com.chenbaiyu.domain.Dept">
+        <id property="id" column="dept_id"/>
+        <result property="deptName"     column="dept_name"/>
+
+        <result property="state"        column="state"/>
+        <result property="companyId"    column="company_id"/>
+        <result property="companyName"  column="company_name"/>
+        <association property="parent" column="parent_id"
+                     javaType="com.chenbaiyu.domain.Dept"
+                     select="findById"/>
+    </resultMap>
+
+    <select id="findById" resultMap="BaseResultMap">
+        select * from pe_dept where dept_id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from pe_dept where company_id = #{companyId}
+    </select>
+
+    <insert id="add" parameterType="com.chenbaiyu.domain.Dept">
+        insert into pe_dept (
+        dept_id,
+        dept_name,
+        parent_id,
+        state,
+        company_id,
+        company_name
+        ) values (
+        #{id},
+        #{deptName},
+        <choose>
+            <when test="parent.id == '' or parent.id == null">
+                null,
+            </when>
+            <otherwise>
+                #{parent.id},
+            </otherwise>
+        </choose>
+        #{state},
+        #{companyId},
+        #{companyName}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="com.chenbaiyu.domain.Dept">
+        update pe_dept set
+            dept_name =#{deptName},
+            parent_id =
+            <choose>
+                <when test="parent.id == '' or parent.id == null">
+                    null ,
+                </when>
+                <otherwise>
+                    #{parent.id},
+                </otherwise>
+            </choose>
+            state     =#{state}
+
+        where dept_id = #{id}
+    </update>
+
+    <select id="findChildById" parameterType="string" resultType="long">
+        select count(*) from pe_dept where parent_id = #{deptId}
+    </select>
+
+    <delete id="deleteById" parameterType="string">
+        delete from pe_dept where dept_id = #{id}
+    </delete>
+</mapper>

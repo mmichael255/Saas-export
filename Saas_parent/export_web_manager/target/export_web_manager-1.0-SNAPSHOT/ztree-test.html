@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script src="plugins/ztree/js/jquery.ztree.excheck-3.5.js"></script>
+    <script src="plugins/ztree/js/jquery.ztree.core-3.5.js"></script>
+    <script src="plugins/ztree/js/jquery-1.4.4.min.js"></script>
+    <link rel="stylesheet" href="plugins/ztree/css/zTreeStyle/zTreeStyle.css">
+    <script src="plugins/ztree/js/jquery.ztree.all-3.5.js"></script>
+    <script>
+        //页面元素加载完毕后，才执行以下js代码
+        $(function () {
+            //1.设置setting全局变量
+            var setting = {
+                check: {
+                    enable: true
+                },
+                data: {
+                    simpleData: {
+                        enable: true
+                    }
+                }
+            };
+
+            //2.准备树节点数据
+            var zNodes =[
+                { id:1, pId:0, name:"Saas管理", open:false},
+                { id:11, pId:1, name:"企业管理"},
+                { id:12, pId:1, name:"模块管理",checked:true}
+            ];
+
+            //3.使用init方法加载树
+            $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+        });
+
+
+    </script>
+</head>
+<body>
+
+
+<ul id="treeDemo" class="ztree"></ul>
+</body>
+</html>

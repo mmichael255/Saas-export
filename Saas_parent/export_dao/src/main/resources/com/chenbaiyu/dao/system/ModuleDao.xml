@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chenbaiyu.dao.system.ModuleDao">
+    <resultMap id="BaseResultMap" type="com.chenbaiyu.domain.Module">
+        <id     property="id"            column="module_id"/>
+        <result property="parentId"      column="parent_id" />
+        <result property="parentName"    column="parent_name" />
+        <result property="name"          column="name" />
+        <result property="layerNum"      column="layer_num" />
+        <result property="isLeaf"        column="is_leaf" />
+        <result property="ico"           column="ico" />
+        <result property="cpermission"   column="cpermission" />
+        <result property="curl"          column="curl" />
+        <result property="ctype"         column="ctype" />
+        <result property="state"         column="state" />
+        <result property="belong"        column="belong" />
+        <result property="cwhich"        column="cwhich" />
+        <result property="quoteNum"      column="quote_num" />
+        <result property="remark"        column="remark" />
+        <result property="orderNo"       column="order_no" />
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from ss_module
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        select * from ss_module where module_id = #{id}
+    </select>
+
+    <insert id="addModule" parameterType="com.chenbaiyu.domain.Module">
+        insert into ss_module (
+            module_id,
+            parent_id,
+            parent_name,
+            `name`,
+            layer_num,
+            is_leaf,
+            ico,
+            cpermission,
+            curl,
+            ctype,
+            state,
+            belong,
+            cwhich,
+            quote_num,
+            remark,
+            order_no
+        ) values (
+            #{id},
+            #{parentId},
+            #{parentName},
+            #{name},
+            #{layerNum},
+            #{isLeaf},
+            #{ico},
+            #{cpermission},
+            #{curl},
+            #{ctype},
+            #{state},
+            #{belong},
+            #{cwhich},
+            #{quoteNum},
+            #{remark},
+            #{orderNo}
+        )
+    </insert>
+
+    <update id="updateModule" parameterType="com.chenbaiyu.domain.Module">
+        update ss_module
+        set
+            parent_id=#{parentId},
+            parent_name=#{parentName},
+            name=#{name},
+            layer_num=#{layerNum},
+            is_leaf=#{isLeaf},
+            ico=#{ico},
+            cpermission=#{cpermission},
+            curl=#{curl},
+            ctype=#{ctype},
+            state=#{state},
+            belong=#{belong},
+            cwhich=#{cwhich},
+            quote_num=#{quoteNum},
+            remark=#{remark},
+            order_no=#{orderNo}
+        where module_id = #{id}
+    </update>
+
+    <delete id="deleteModule" parameterType="string">
+        delete from ss_module where module_id = #{id}
+    </delete>
+
+    <select id="findRoleModuleByRoleId" resultMap="BaseResultMap" parameterType="string">
+        select m.*
+        from ss_module m
+        inner join pe_role_module rm on m.module_id = rm.module_id
+        where rm.role_id = #{roleid}
+    </select>
+
+    <select id="findModuleByUserId" parameterType="string" resultMap="BaseResultMap">
+        select m.*
+        from pe_role_user ru
+        inner join pe_role_module rm on rm.role_id = ru.role_id
+        inner join ss_module m on  m.module_id = rm.module_id
+        where ru.user_id = #{id}
+    </select>
+
+    <select id="findModuleByDegree" parameterType="int" resultMap="BaseResultMap">
+        select * from ss_module where belong = #{i}
+    </select>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--Spring处理认证授权逻辑的对象-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!--注入SecurityManager-->
+        <property name="securityManager" ref="securityManager"/>
+
+        <property name="filterChainDefinitions">
+            <value>
+                /css/**=anon
+                /img/**=anon
+                /make/**=anon
+                /plugins/**=anon
+                /userlogin.do=anon
+                /system/user/list.do=perms["用户管理"]
+                /**=authc
+            </value>
+        </property>
+
+        <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+    </bean>
+
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    <!--创建securityManager-->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--注入Realm-->
+        <property name="realm" ref="myRealm"/>
+    </bean>
+
+    <!--创建Realm，这个Realm是我们自定义的-->
+    <bean id="myRealm" class="com.chenbaiyu.web.shiro.AuthRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
+
+<!--    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">-->
+<!--        <property name="hashAlgorithmName" value="md5"/>-->
+<!--    </bean>-->
+
+    <bean id="credentialsMatcher" class="com.chenbaiyu.web.shiro.CustomCredentialsMatcher"/>
+
+    <aop:aspectj-autoproxy/>
+
+</beans>

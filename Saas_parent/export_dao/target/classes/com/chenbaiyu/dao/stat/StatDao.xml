@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chenbaiyu.dao.stat.StatDao">
+    <select id="findSellStat" parameterType="string" resultType="map">
+        SELECT
+        f.`factory_name` `name` , IFNULL(SUM(cp.`amount`),0) `value`
+        FROM co_factory f
+        LEFT JOIN co_contract_product cp ON f.`id` = cp.`factory_id`
+        WHERE cp.`company_id` = #{companyId}
+        GROUP BY f.`factory_name`
+        ORDER BY(IFNULL(SUM(cp.`amount`),0)) DESC
+    </select>
+
+    <select id="findProductSellStat" parameterType="string" resultType="map">
+        SELECT cp.`product_no` `name`,IFNULL(SUM(cp.`amount`),0) `value`
+        FROM co_contract_product cp
+        WHERE cp.`company_id` = #{companyId}
+        GROUP BY cp.`product_no`
+        ORDER BY(IFNULL(SUM(cp.`amount`),0)) DESC
+        LIMIT 5
+    </select>
+
+    <select id="findonlineData" parameterType="string" resultType="map">
+        SELECT o.A1 `name`,IFNULL(sl.c,0) `value`
+        FROM st_online_info o
+        LEFT JOIN(
+            SELECT DATE_FORMAT(s.time,'%H') h,COUNT(*) c
+            FROM st_sys_log s
+            WHERE s.company_id = #{companyId}
+            GROUP BY DATE_FORMAT(s.time,'%H')) sl
+        ON o.A1 = sl.h
+    </select>
+</mapper>

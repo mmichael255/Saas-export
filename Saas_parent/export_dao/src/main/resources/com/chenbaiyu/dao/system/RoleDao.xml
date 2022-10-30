@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chenbaiyu.dao.system.RoleDao">
+    <resultMap id="BaseResultMap" type="com.chenbaiyu.domain.Role">
+        <id property="id"               column="role_id"/>
+        <result property="name"         column="name" />
+        <result property="remark"       column="remark" />
+        <result property="orderNo"      column="order_no" />
+        <result property="companyId"    column="company_id" />
+        <result property="companyName"  column="company_name" />
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from pe_role
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        select * from pe_role where role_id = #{id}
+    </select>
+
+    <insert id="addRole" parameterType="com.chenbaiyu.domain.Role">
+        insert into pe_role (
+        role_id,
+        name,
+        remark,
+        order_no,
+        company_id,
+        company_name
+        ) values (
+        #{id},
+        #{name},
+        #{remark},
+        #{orderNo},
+        #{companyId},
+        #{companyName}
+        )
+    </insert>
+
+    <update id="updateRole" parameterType="com.chenbaiyu.domain.Role">
+        update pe_role
+        set
+        name=#{name},
+        remark=#{remark},
+        order_no=#{orderNo},
+        company_id=#{companyId},
+        company_name=#{companyName}
+        where
+        role_id = #{id}
+    </update>
+
+    <delete id="deleteRole" parameterType="string">
+        delete from pe_role where role_id = #{id}
+    </delete>
+
+    <delete id="deleteRoleModule" parameterType="string">
+        delete from pe_role_module where role_id = #{roleid}
+    </delete>
+
+    <insert id="addRoleModule" >
+        insert into pe_role_module (
+        role_id,
+        module_id
+        ) values(
+        #{roleid},
+        #{moduleId}
+        )
+    </insert>
+
+    <select id="findUserRoleByUserId" parameterType="string" resultMap="BaseResultMap">
+        select r.*
+        from pe_role_user ru
+        inner join pe_role r on ru.role_id = r.role_id
+        where ru.user_id = #{id}
+    </select>
+
+    <delete id="deleteUserRoleById" parameterType="string" >
+        delete from pe_role_user where user_id = #{userid}
+    </delete>
+
+    <insert id="addUserRole" parameterType="string">
+        insert into pe_role_user (
+            user_id,
+            role_id
+        ) values(
+            #{userid},
+            #{roleId}
+        )
+    </insert>
+</mapper>

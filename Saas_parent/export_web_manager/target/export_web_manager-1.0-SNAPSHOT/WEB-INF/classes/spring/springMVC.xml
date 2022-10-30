@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <context:component-scan base-package="com.chenbaiyu.web"/>
+
+    <mvc:annotation-driven/>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="suffix" value=".jsp"/>
+        <property name="prefix" value="/WEB-INF/pages/"/>
+    </bean>
+
+    <aop:aspectj-autoproxy/>
+
+    <mvc:annotation-driven conversion-service="conversionServiceFactory"/>
+
+    <bean id="stringToDate" class="com.chenbaiyu.web.converter.StringToDateConverter"/>
+
+    <bean id="conversionServiceFactory" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <ref bean="stringToDate"/>
+            </set>
+        </property>
+    </bean>
+
+    <context:property-placeholder location="classpath:properties/qiniu.properties"/>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="100000000"/>
+    </bean>
+
+    <dubbo:application name="export_web_manager"/>
+
+    <dubbo:registry address="zookeeper://192.168.42.177:2181"/>
+
+    <dubbo:annotation package="com.chenbaiyu.web"/>
+
+    <bean class="com.chenbaiyu.web.exceptions.CustomExceptionResolver"/>
+</beans>
